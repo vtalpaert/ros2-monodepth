@@ -22,12 +22,12 @@ source install/setup.bash
 
 1. Start the webcam publisher node:
 ```bash
-ros2 run zoedepth webcam_publisher
+ros2 run zoedepth webcam_publisher --ros-args -p device_id:=0
 ```
 
 2. In another terminal, start the depth estimator node:
 ```bash
-ros2 run zoedepth depth_estimator
+ros2 run zoedepth depth_estimator --ros-args -p compiler_backend:='aot_eager'
 ```
 
 ### Configuration
@@ -62,16 +62,11 @@ pip3 install torch-tensorrt
 ### Performance
 
 Performance measurements were conducted on an NVIDIA RTX 4070 GPU. Initial testing shows:
-- Average latency of ~120ms per frame with default inductor backend
-- Similar performance with TensorRT backend in initial tests
+- Average latency of ~120ms per frame at 8Hz with no compiler backend
+- Similar performance with Inductor or TensorRT backend in initial tests, so no visible acceleration
 - Testing on NVIDIA Jetson Orin platforms is planned
 
 These numbers are preliminary and may vary based on your specific hardware configuration and input resolution.
-
-Example:
-```bash
-ros2 run zoedepth webcam_publisher --ros-args -p device_id:=1 -p publish_rate:=15.0
-```
 
 ## Topics
 
