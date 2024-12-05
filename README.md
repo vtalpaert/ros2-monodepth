@@ -45,6 +45,7 @@ Depth Estimator Parameters:
 - `model_type` (default: 'NK'): Model type (N, K, or NK)
 - `normalize_depth` (default: false): Whether to normalize depth output
 - `colorize_output` (default: false): Whether to apply colorization to the depth map
+- `measure_latency` (default: false): Whether to measure and log processing latency
 
 Example:
 ```bash

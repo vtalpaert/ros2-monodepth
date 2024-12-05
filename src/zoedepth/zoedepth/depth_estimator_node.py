@@ -4,6 +4,8 @@ import rclpy
 from rclpy.node import Node
 import torch
 from sensor_msgs.msg import Image
+from collections import deque
+from time import time
 from cv_bridge import CvBridge
 import numpy as np
 import cv2
@@ -21,6 +23,10 @@ class DepthEstimatorNode(Node):
         self.declare_parameter("model_type", "NK")  # Options: N, K, NK
         self.declare_parameter("normalize_depth", False)
         self.declare_parameter("colorize_output", False)
+        self.declare_parameter("measure_latency", False)
+        
+        # Initialize latency tracking
+        self.latency_window = deque(maxlen=100)  # Track last 100 measurements
 
         # Get parameters
         model_repo = self.get_parameter("model_repo").value
@@ -87,6 +93,7 @@ class DepthEstimatorNode(Node):
     def image_callback(self, msg):
         """Process incoming image and publish depth estimation."""
         try:
+            start_time = time() if self.get_parameter("measure_latency").value else None
             # Convert ROS Image to CV2
             pil_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="rgb8")
 
@@ -116,6 +123,13 @@ class DepthEstimatorNode(Node):
 
             # Publish depth image
             self.publisher.publish(depth_msg)
+
+            # Calculate and log latency if enabled
+            if self.get_parameter("measure_latency").value:
+                latency = time() - start_time
+                self.latency_window.append(latency)
+                mean_latency = sum(self.latency_window) / len(self.latency_window)
+                self.get_logger().info(f'Processing latency: {mean_latency:.3f}s')
 
         except Exception as e:
             self.get_logger().error(f"Error processing image: {str(e)}")

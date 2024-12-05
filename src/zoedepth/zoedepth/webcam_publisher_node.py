@@ -17,7 +17,7 @@ class WebcamPublisherNode(Node):
         self.declare_parameter('device_id', 3)
         self.declare_parameter('crop_width', -1)  # -1 means no cropping
         self.declare_parameter('crop_height', -1)
-        self.declare_parameter('publish_rate', 30.0)  # Hz
+        self.declare_parameter('publish_rate', 15.0)  # Hz
         
         # Initialize CV bridge
         self.bridge = CvBridge()
