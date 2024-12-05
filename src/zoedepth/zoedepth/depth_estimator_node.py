@@ -22,7 +22,7 @@ class DepthEstimatorNode(Node):
         self.declare_parameter("model_repo", "isl-org/ZoeDepth")
         self.declare_parameter("model_type", "NK")  # Options: N, K, NK
         self.declare_parameter("normalize_depth", False)
-        self.declare_parameter("colorize_output", False)
+        self.declare_parameter("colorize_output", True)
 
         # Get parameters
         model_repo = self.get_parameter("model_repo").value
