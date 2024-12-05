@@ -20,15 +20,19 @@ class DepthEstimatorNode(Node):
 
         # Declare parameters
         self.declare_parameter("model_repo", "isl-org/ZoeDepth")
-        self.declare_parameter("model_name", "ZoeD_NK")
+        self.declare_parameter("model_type", "NK")  # Options: N, K, NK
         self.declare_parameter("normalize_depth", True)
 
         # Get parameters
         model_repo = self.get_parameter("model_repo").value
-        model_name = self.get_parameter("model_name").value
+        model_type = self.get_parameter("model_type").value
+
+        # Validate model type
+        if model_type not in ["N", "K", "NK"]:
+            raise ValueError("model_type must be one of: N, K, NK")
 
         self.get_logger().info(
-            f"Loading ZoeDepth model {model_name} from {model_repo}..."
+            f"Loading ZoeDepth model type {model_type} from {model_repo}..."
         )
 
         # Setup device
@@ -36,21 +40,37 @@ class DepthEstimatorNode(Node):
         self.get_logger().info(f"Using device: {self.device}")
 
         try:
-            # self.model = torch.hub.load(model_repo, model_name, pretrained=False)
-            # self.model.to(self.device)
+            # Model configuration
+            model_configs = {
+                "N": {
+                    "name": "ZoeD_N",
+                    "weights": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_N.pt"
+                },
+                "K": {
+                    "name": "ZoeD_K",
+                    "weights": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_K.pt"
+                },
+                "NK": {
+                    "name": "ZoeD_NK",
+                    "weights": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_NK.pt"
+                }
+            }
 
-            # Zoe_NK
-            model_zoe_nk = torch.hub.load(model_repo, "ZoeD_NK", pretrained=False)
+            config = model_configs[model_type]
+            
+            # Load model
+            model = torch.hub.load(model_repo, config["name"], pretrained=False)
             pretrained_dict = torch.hub.load_state_dict_from_url(
-                "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_NK.pt",
+                config["weights"],
                 map_location=self.device,
             )
-            model_zoe_nk.load_state_dict(pretrained_dict["model"], strict=False)
-            for b in model_zoe_nk.core.core.pretrained.model.blocks:
+            model.load_state_dict(pretrained_dict["model"], strict=False)
+            
+            # Apply Identity to drop_path
+            for b in model.core.core.pretrained.model.blocks:
                 b.drop_path = torch.nn.Identity()
 
-            zoe = model_zoe_nk.to(self.device)
-            self.model = zoe
+            self.model = model.to(self.device)
             self.get_logger().info("Model loaded successfully!")
         except Exception as e:
             self.get_logger().error(f"Failed to load model: {str(e)}")
