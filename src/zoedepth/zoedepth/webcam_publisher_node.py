@@ -14,7 +14,7 @@ class WebcamPublisherNode(Node):
         super().__init__('webcam_publisher_node')
         
         # Declare parameters
-        self.declare_parameter('device_id', 0)
+        self.declare_parameter('device_id', 3)
         self.declare_parameter('crop_width', -1)  # -1 means no cropping
         self.declare_parameter('crop_height', -1)
         self.declare_parameter('publish_rate', 30.0)  # Hz
