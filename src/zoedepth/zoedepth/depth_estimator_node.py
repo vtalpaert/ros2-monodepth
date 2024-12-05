@@ -22,6 +22,7 @@ class DepthEstimatorNode(Node):
         self.declare_parameter("model_repo", "isl-org/ZoeDepth")
         self.declare_parameter("model_type", "NK")  # Options: N, K, NK
         self.declare_parameter("normalize_depth", False)
+        self.declare_parameter("colorize_output", False)
 
         # Get parameters
         model_repo = self.get_parameter("model_repo").value
@@ -94,8 +95,11 @@ class DepthEstimatorNode(Node):
             # Infer depth
             depth_numpy = self.model.infer_pil(pil_image)
 
-            # Get depth output
-            if self.get_parameter("normalize_depth").value:
+            # Process depth output
+            if self.get_parameter("colorize_output").value:
+                depth_output = colorize(depth_numpy)
+                encoding = "bgr8"
+            elif self.get_parameter("normalize_depth").value:
                 # Normalize depth for visualization (0-255)
                 depth_output = (
                     (depth_numpy - depth_numpy.min())
