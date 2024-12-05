@@ -9,6 +9,8 @@
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>python3-opencv</depend>
   
   <exec_depend>python3-torch</exec_depend>
   <exec_depend>nvidia-cuda-toolkit</exec_depend>
