@@ -18,6 +18,7 @@ class DepthEstimatorNode(Node):
         # Declare parameters
         self.declare_parameter('model_repo', 'isl-org/ZoeDepth')
         self.declare_parameter('model_name', 'ZoeD_NK')
+        self.declare_parameter('normalize_depth', True)
         
         # Get parameters
         model_repo = self.get_parameter('model_repo').value
@@ -63,11 +64,17 @@ class DepthEstimatorNode(Node):
             # Infer depth
             depth_numpy = self.model.infer_pil(pil_image)
             
-            # Normalize depth for visualization (0-255)
-            depth_normalized = ((depth_numpy - depth_numpy.min()) * (255 / (depth_numpy.max() - depth_numpy.min()))).astype(np.uint8)
+            # Get depth output
+            if self.get_parameter('normalize_depth').value:
+                # Normalize depth for visualization (0-255)
+                depth_output = ((depth_numpy - depth_numpy.min()) * (255 / (depth_numpy.max() - depth_numpy.min()))).astype(np.uint8)
+                encoding = 'mono8'
+            else:
+                depth_output = depth_numpy
+                encoding = '32FC1'
             
             # Convert depth map to ROS Image message
-            depth_msg = self.bridge.cv2_to_imgmsg(depth_normalized, encoding='mono8')
+            depth_msg = self.bridge.cv2_to_imgmsg(depth_output, encoding=encoding)
             depth_msg.header = msg.header
             
             # Publish depth image
