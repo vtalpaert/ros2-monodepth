@@ -12,7 +12,10 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=[
+        'setuptools',
+        'zoedepth @ git+https://github.com/isl-org/ZoeDepth.git'
+    ],
     zip_safe=True,
     maintainer='Victor Talpaert',
     maintainer_email='victor.talpaert@gmail.com',
