@@ -24,7 +24,7 @@ cd ~/ros2_ws/src
 
 2. Clone this repository into the src directory:
 ```bash
-git clone https://github.com/YOUR_USERNAME/ros2_monodepth.git
+git clone https://github.com/vtalpaert/ros2_monodepth.git
 ```
 
 3. Install dependencies:
