@@ -35,20 +35,38 @@ ros2 run zoedepth depth_estimator
 Both nodes support various parameters that can be set via the command line:
 
 Webcam Publisher Parameters:
-- `device_id` (default: 0): Webcam device ID
+- `device_id` (default: 0): Webcam device ID or path
 - `target_width` (default: 256): Target width for resizing
 - `target_height` (default: 256): Target height for resizing
-- `force_square_crop` (default: false): Force square output by cropping to shortest dimension
-- `publish_rate` (default: 30.0): Publishing rate in Hz
+- `force_square_crop` (default: false): Force square output by cropping to shortest dimension before resizing
+- `publish_rate` (default: 15.0): Publishing rate in Hz
 
 Depth Estimator Parameters:
 - `model_repo` (default: 'isl-org/ZoeDepth'): Model repository
 - `model_type` (default: 'NK'): Model type (N, K, or NK)
-- `normalize_depth` (default: false): Whether to normalize depth output
-- `colorize_output` (default: false): Whether to apply colorization to the depth map
+- `normalize_depth` (default: false): Whether to normalize depth output to 0-255 range
+- `colorize_output` (default: false): Whether to apply colorization to the depth map using magma colormap
 - `measure_latency` (default: false): Whether to measure and log processing latency
 - `use_compiler` (default: true): Whether to use PyTorch's compiler
-- `compiler_backend` (default: 'inductor'): Compiler backend to use (inductor, eager, or aot_eager)
+- `compiler_backend` (default: 'inductor'): Compiler backend to use. Options:
+  - 'inductor': Default PyTorch 2.0 compiler
+  - 'eager': Traditional PyTorch eager execution
+  - 'aot_eager': Ahead-of-time compilation with eager execution
+  - 'tensorrt': TensorRT acceleration (requires torch-tensorrt package)
+
+Note: To use the TensorRT backend, you must first install the torch-tensorrt package:
+```bash
+pip3 install torch-tensorrt
+```
+
+### Performance
+
+Performance measurements were conducted on an NVIDIA RTX 4070 GPU. Initial testing shows:
+- Average latency of ~120ms per frame with default inductor backend
+- Similar performance with TensorRT backend in initial tests
+- Testing on NVIDIA Jetson Orin platforms is planned
+
+These numbers are preliminary and may vary based on your specific hardware configuration and input resolution.
 
 Example:
 ```bash

@@ -8,6 +8,7 @@ from collections import deque
 from time import time
 
 # Check for TensorRT availability
+# Note: TensorRT backend requires manual installation via: pip3 install torch-tensorrt
 TENSORRT_AVAILABLE = False
 try:
     import torch_tensorrt
