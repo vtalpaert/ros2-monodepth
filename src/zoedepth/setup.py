@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'depth_estimator = zoedepth.depth_estimator_node:main',
+            'webcam_publisher = zoedepth.webcam_publisher_node:main',
         ],
     },
 )
