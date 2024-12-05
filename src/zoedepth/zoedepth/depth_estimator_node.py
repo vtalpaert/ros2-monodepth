@@ -98,6 +98,8 @@ class DepthEstimatorNode(Node):
             # Process depth output
             if self.get_parameter("colorize_output").value:
                 depth_output = colorize(depth_numpy)
+                # Convert RGBA to BGR
+                depth_output = cv2.cvtColor(depth_output, cv2.COLOR_RGBA2BGR)
                 encoding = "bgr8"
             elif self.get_parameter("normalize_depth").value:
                 # Normalize depth for visualization (0-255)
