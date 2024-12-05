@@ -36,8 +36,8 @@ Both nodes support various parameters that can be set via the command line:
 
 Webcam Publisher Parameters:
 - `device_id` (default: 0): Webcam device ID
-- `crop_width` (default: -1): Width to crop image to (-1 for no cropping)
-- `crop_height` (default: -1): Height to crop image to (-1 for no cropping)
+- `target_width` (default: 256): Target width for resizing while maintaining aspect ratio
+- `target_height` (default: 256): Target height for resizing while maintaining aspect ratio
 - `publish_rate` (default: 30.0): Publishing rate in Hz
 
 Depth Estimator Parameters:

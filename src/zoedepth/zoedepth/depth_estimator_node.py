@@ -6,6 +6,14 @@ import torch
 from sensor_msgs.msg import Image
 from collections import deque
 from time import time
+
+# Check for TensorRT availability
+TENSORRT_AVAILABLE = False
+try:
+    import torch_tensorrt
+    TENSORRT_AVAILABLE = True
+except ImportError:
+    pass
 from cv_bridge import CvBridge
 import numpy as np
 import cv2
@@ -82,6 +90,8 @@ class DepthEstimatorNode(Node):
             # Apply model compilation if enabled
             if self.get_parameter("use_compiler").value:
                 backend = self.get_parameter("compiler_backend").value
+                if backend == "tensorrt" and not TENSORRT_AVAILABLE:
+                    raise ValueError("TensorRT backend requested but torch_tensorrt is not available")
                 self.get_logger().info(f"Compiling model with backend: {backend}")
                 self.model = torch.compile(self.model, backend=backend)
             

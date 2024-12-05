@@ -15,8 +15,8 @@ class WebcamPublisherNode(Node):
         
         # Declare parameters
         self.declare_parameter('device_id', 3)
-        self.declare_parameter('crop_width', 256)  # -1 means no cropping
-        self.declare_parameter('crop_height', 256)
+        self.declare_parameter('target_width', 256)  # Target width for resizing
+        self.declare_parameter('target_height', 256)  # Target height for resizing
         self.declare_parameter('publish_rate', 15.0)  # Hz
         
         # Initialize CV bridge
@@ -59,16 +59,30 @@ class WebcamPublisherNode(Node):
         """Capture and publish webcam frame."""
         ret, frame = self.cap.read()
         if ret:
-            # Crop if requested
-            crop_width = self.get_parameter('crop_width').value
-            crop_height = self.get_parameter('crop_height').value
+            # Resize while maintaining aspect ratio if requested
+            target_width = self.get_parameter('target_width').value
+            target_height = self.get_parameter('target_height').value
             
-            if crop_width > 0 and crop_height > 0:
+            if target_width > 0 and target_height > 0:
                 h, w = frame.shape[:2]
-                start_x = max(0, w//2 - crop_width//2)
-                start_y = max(0, h//2 - crop_height//2)
-                frame = frame[start_y:start_y+crop_height, 
-                            start_x:start_x+crop_width]
+                # Calculate target size maintaining aspect ratio
+                aspect = w / h
+                if aspect > target_width / target_height:  # Width limited
+                    new_width = target_width
+                    new_height = int(target_width / aspect)
+                else:  # Height limited
+                    new_height = target_height
+                    new_width = int(target_height * aspect)
+                
+                # Resize to fit within target dimensions
+                frame = cv2.resize(frame, (new_width, new_height))
+                
+                # Center crop to exact target size if needed
+                if new_width != target_width or new_height != target_height:
+                    start_x = max(0, new_width//2 - target_width//2)
+                    start_y = max(0, new_height//2 - target_height//2)
+                    frame = frame[start_y:start_y+target_height, 
+                                start_x:start_x+target_width]
             
             # Convert to ROS Image and publish
             try:
