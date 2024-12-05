@@ -24,12 +24,29 @@ class WebcamPublisherNode(Node):
         
         # Setup webcam
         device_id = self.get_parameter('device_id').value
-        self.cap = cv2.VideoCapture(device_id)
+        
+        # Try different device paths
+        device_paths = [
+            device_id,  # Try numeric index first
+            f"/dev/video{device_id}",  # Try explicit device path
+            f"/dev/v4l/by-id/*{device_id}*",  # Try video4linux by-id path
+        ]
+        
+        for device in device_paths:
+            self.get_logger().info(f'Attempting to open camera device: {device}')
+            self.cap = cv2.VideoCapture(device)
+            if self.cap.isOpened():
+                self.get_logger().info(f'Successfully opened camera device: {device}')
+                break
+        
         if not self.cap.isOpened():
-            self.get_logger().error(f'Failed to open webcam device {device_id}')
-            raise RuntimeError(f'Could not open webcam device {device_id}')
-            
-        self.get_logger().info(f'Successfully opened webcam device {device_id}')
+            self.get_logger().error('Failed to open any camera device')
+            self.get_logger().error('Available video devices:')
+            import glob
+            devices = glob.glob('/dev/video*')
+            for dev in devices:
+                self.get_logger().error(f'  - {dev}')
+            raise RuntimeError('Could not open any camera device')
         
         # Create publisher
         self.publisher = self.create_publisher(Image, 'image_raw', 10)
