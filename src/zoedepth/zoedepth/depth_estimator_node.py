@@ -24,6 +24,8 @@ class DepthEstimatorNode(Node):
         self.declare_parameter("normalize_depth", False)
         self.declare_parameter("colorize_output", False)
         self.declare_parameter("measure_latency", False)
+        self.declare_parameter("use_compiler", True)
+        self.declare_parameter("compiler_backend", "inductor")  # Options: inductor, eager, aot_eager
         
         # Initialize latency tracking
         self.latency_window = deque(maxlen=100)  # Track last 100 measurements
@@ -76,6 +78,13 @@ class DepthEstimatorNode(Node):
                 b.drop_path = torch.nn.Identity()
 
             self.model = model.to(self.device)
+            
+            # Apply model compilation if enabled
+            if self.get_parameter("use_compiler").value:
+                backend = self.get_parameter("compiler_backend").value
+                self.get_logger().info(f"Compiling model with backend: {backend}")
+                self.model = torch.compile(self.model, backend=backend)
+            
             self.get_logger().info("Model loaded successfully!")
         except Exception as e:
             self.get_logger().error(f"Failed to load model: {str(e)}")

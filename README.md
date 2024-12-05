@@ -46,6 +46,8 @@ Depth Estimator Parameters:
 - `normalize_depth` (default: false): Whether to normalize depth output
 - `colorize_output` (default: false): Whether to apply colorization to the depth map
 - `measure_latency` (default: false): Whether to measure and log processing latency
+- `use_compiler` (default: true): Whether to use PyTorch's compiler
+- `compiler_backend` (default: 'inductor'): Compiler backend to use (inductor, eager, or aot_eager)
 
 Example:
 ```bash
