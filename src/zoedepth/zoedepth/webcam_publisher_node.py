@@ -17,6 +17,7 @@ class WebcamPublisherNode(Node):
         self.declare_parameter('device_id', 3)
         self.declare_parameter('target_width', 256)  # Target width for resizing
         self.declare_parameter('target_height', 256)  # Target height for resizing
+        self.declare_parameter('force_square_crop', False)  # Force square output by cropping
         self.declare_parameter('publish_rate', 15.0)  # Hz
         
         # Initialize CV bridge
@@ -65,24 +66,43 @@ class WebcamPublisherNode(Node):
             
             if target_width > 0 and target_height > 0:
                 h, w = frame.shape[:2]
-                # Calculate target size maintaining aspect ratio
-                aspect = w / h
-                if aspect > target_width / target_height:  # Width limited
-                    new_width = target_width
-                    new_height = int(target_width / aspect)
-                else:  # Height limited
-                    new_height = target_height
-                    new_width = int(target_height * aspect)
+                force_square = self.get_parameter('force_square_crop').value
                 
-                # Resize to fit within target dimensions
-                frame = cv2.resize(frame, (new_width, new_height))
-                
-                # Center crop to exact target size if needed
-                if new_width != target_width or new_height != target_height:
-                    start_x = max(0, new_width//2 - target_width//2)
-                    start_y = max(0, new_height//2 - target_height//2)
-                    frame = frame[start_y:start_y+target_height, 
-                                start_x:start_x+target_width]
+                if force_square:
+                    # Determine the square size (minimum of target dimensions)
+                    square_size = min(target_width, target_height)
+                    
+                    # Calculate center crop to square
+                    if w > h:
+                        start_x = (w - h) // 2
+                        start_y = 0
+                        frame = frame[:, start_x:start_x + h]
+                    else:
+                        start_x = 0
+                        start_y = (h - w) // 2
+                        frame = frame[start_y:start_y + w, :]
+                    
+                    # Resize the square crop to target size
+                    frame = cv2.resize(frame, (square_size, square_size))
+                else:
+                    # Calculate target size maintaining aspect ratio
+                    aspect = w / h
+                    if aspect > target_width / target_height:  # Width limited
+                        new_width = target_width
+                        new_height = int(target_width / aspect)
+                    else:  # Height limited
+                        new_height = target_height
+                        new_width = int(target_height * aspect)
+                    
+                    # Resize to fit within target dimensions
+                    frame = cv2.resize(frame, (new_width, new_height))
+                    
+                    # Center crop to exact target size if needed
+                    if new_width != target_width or new_height != target_height:
+                        start_x = max(0, new_width//2 - target_width//2)
+                        start_y = max(0, new_height//2 - target_height//2)
+                        frame = frame[start_y:start_y+target_height, 
+                                    start_x:start_x+target_width]
             
             # Convert to ROS Image and publish
             try:
