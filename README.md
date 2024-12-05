@@ -1,5 +1,7 @@
 # ROS2 Monodepth
 
+**Note: This project was generated with the assistance of artificial intelligence.**
+
 This ROS2 project implements monocular depth estimation using the ZoeDepth model. It provides real-time depth estimation from single RGB images.
 
 ## Packages

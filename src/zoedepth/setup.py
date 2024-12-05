@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'depth_estimator = zoedepth.depth_estimator_node:main',
         ],
     },
 )
