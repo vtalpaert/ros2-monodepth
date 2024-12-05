@@ -8,8 +8,6 @@ from cv_bridge import CvBridge
 import numpy as np
 import cv2
 
-from zoedepth.models.builder import build_model
-from zoedepth.utils.config import get_config
 from zoedepth.utils.misc import colorize
 
 class DepthEstimatorNode(Node):
@@ -22,7 +20,7 @@ class DepthEstimatorNode(Node):
         self.declare_parameter("model_repo", "isl-org/ZoeDepth")
         self.declare_parameter("model_type", "NK")  # Options: N, K, NK
         self.declare_parameter("normalize_depth", False)
-        self.declare_parameter("colorize_output", True)
+        self.declare_parameter("colorize_output", False)
 
         # Get parameters
         model_repo = self.get_parameter("model_repo").value
@@ -97,7 +95,7 @@ class DepthEstimatorNode(Node):
 
             # Process depth output
             if self.get_parameter("colorize_output").value:
-                depth_output = colorize(depth_numpy)
+                depth_output = colorize(depth_numpy, cmap='magma_r')
                 # Convert RGBA to BGR
                 depth_output = cv2.cvtColor(depth_output, cv2.COLOR_RGBA2BGR)
                 encoding = "bgr8"

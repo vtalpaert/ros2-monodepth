@@ -4,37 +4,14 @@
 
 This ROS2 project implements monocular depth estimation using the ZoeDepth model. It provides real-time depth estimation from single RGB images.
 
-## Prerequisites
-
-- ROS2 Humble
-- Python 3.8+
-- CUDA-capable GPU (recommended)
-- OpenCV
-- PyTorch
-- sensor_msgs
-- cv_bridge
-
 ## Installation
 
-1. Create a ROS2 workspace if you don't have one:
+1. Install dependencies:
 ```bash
-mkdir -p ~/ros2_ws/src
-cd ~/ros2_ws/src
+rosdep install -i --from-path src --rosdistro humble -y --ignore-src
 ```
 
-2. Clone this repository into the src directory:
-```bash
-git clone https://github.com/vtalpaert/ros2_monodepth.git
-```
-
-3. Install dependencies:
-```bash
-sudo apt-get update
-sudo apt-get install python3-opencv ros-humble-cv-bridge
-pip3 install torch torchvision
-```
-
-4. Build the workspace:
+2. Build the workspace:
 ```bash
 cd ~/ros2_ws
 colcon build --symlink-install
