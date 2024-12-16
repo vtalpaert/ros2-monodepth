@@ -54,11 +54,11 @@ def main(args=None):
 
     # Get parameters
     model_repo = "isl-org/ZoeDepth"
-    model_type = "N"
+    model_name = "ZoeD_N"
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model_path = f"{model_type}.onnx"
+    model_path = f"{model_name}.onnx"
 
-    model = zoedepth_loader(model_repo, model_type, device)
+    model = zoedepth_loader(model_repo, model_name, device)
 
     print(f"Replacing Resizer {model.core.prep.resizer} with nn.Identity")
     model.core.prep.resizer = torch.nn.Identity()

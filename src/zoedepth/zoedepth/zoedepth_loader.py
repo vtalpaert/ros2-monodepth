@@ -1,32 +1,21 @@
 import torch
 
-def zoedepth_loader(model_repo, model_type, device):
-    # Model configuration
-    model_configs = {
-        "N": {
-            "name": "ZoeD_N",
-            "weights": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_N.pt",
-        },
-        "K": {
-            "name": "ZoeD_K",
-            "weights": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_K.pt",
-        },
-        "NK": {
-            "name": "ZoeD_NK",
-            "weights": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_NK.pt",
-        },
+def zoedepth_loader(model_repo, model_name, device):
+    # Model weights mapping
+    weights_urls = {
+        "ZoeD_N": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_N.pt",
+        "ZoeD_K": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_K.pt",
+        "ZoeD_NK": "https://github.com/isl-org/ZoeDepth/releases/download/v1.0/ZoeD_M12_NK.pt",
     }
 
-    # Validate model type
-    if model_type not in model_configs:
-        raise ValueError(f"model_type must be one of: {list(model_configs.keys())}")
-
-    config = model_configs[model_type]
+    # Validate model name
+    if model_name not in weights_urls:
+        raise ValueError(f"model_name must be one of: {list(weights_urls.keys())}")
 
     # Load model
-    model = torch.hub.load(model_repo, config["name"], pretrained=False)
+    model = torch.hub.load(model_repo, model_name, pretrained=False)
     pretrained_dict = torch.hub.load_state_dict_from_url(
-        config["weights"],
+        weights_urls[model_name],
         map_location=device,
     )
     model.load_state_dict(pretrained_dict["model"], strict=False)

@@ -43,7 +43,7 @@ Webcam Publisher Parameters:
 
 Depth Estimator Parameters:
 - `model_repo` (default: 'isl-org/ZoeDepth'): Model repository
-- `model_type` (default: 'NK'): Model type (N, K, or NK)
+- `model_name` (default: 'ZoeD_NK'): Model name (ZoeD_N, ZoeD_K, or ZoeD_NK)
 - `normalize_depth` (default: false): Whether to normalize depth output to 0-255 range
 - `colorize_output` (default: false): Whether to apply colorization to the depth map using magma colormap
 - `measure_latency` (default: false): Whether to measure and log processing latency
