@@ -1,6 +1,8 @@
 __pycache__
 .aider*
 .env
-install/
+*.onnx
 build/
+data/
+install/
 log/

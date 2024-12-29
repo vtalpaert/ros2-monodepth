@@ -54,7 +54,7 @@ def main(args=None):
 
     # Get parameters
     model_repo = "isl-org/ZoeDepth"
-    model_name = "ZoeD_N"
+    model_name = "ZoeD_K"
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model_path = f"{model_name}.onnx"
 

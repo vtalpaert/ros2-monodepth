@@ -15,8 +15,8 @@ class WebcamPublisherNode(Node):
         
         # Declare parameters
         self.declare_parameter('device_id', 0)
-        self.declare_parameter('target_width', 256)  # Target width for resizing
-        self.declare_parameter('target_height', 256)  # Target height for resizing
+        self.declare_parameter('target_width', 640)  # Target width for resizing
+        self.declare_parameter('target_height', 480)  # Target height for resizing
         self.declare_parameter('force_square_crop', False)  # Force square output by cropping
         self.declare_parameter('publish_rate', 15.0)  # Hz
         
