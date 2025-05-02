@@ -1,8 +1,6 @@
 # ROS2 Monodepth
 
-**Note: This project was generated with the assistance of artificial intelligence.**
-
-This ROS2 project implements monocular depth estimation using the ZoeDepth model. It provides real-time depth estimation from single RGB images.
+This ROS2 project implements monocular depth estimation using the ZoeDepth model. It provides real-time absolute depth estimation from single RGB images.
 
 ## Python node
 
@@ -94,18 +92,16 @@ The ZoeDepth network is a PyTorch program in Python. For faster inference, we ex
    1. Quantization
 1. Create a composable node to associate with depth_image_proc
 
-### Setup
+### Local setup (unmainted)
 
 This is my setup to obtain the optimised network
 
-- NVIDIA Driver Version: 565.57.01
-- CUDA 12.7
-- cuDNN 9.6
-- TensorRT 10.5
+- NVIDIA Driver Version: 570.124.06
+- CUDA 12.8
+- cuDNN 9
+- TensorRT 10.10
 - Pytorch 2.5
 - ONNX runtime 1.20
-
-Note: we installed cudnn9-6 for CUDA 12.6 when we actually have 12.7, let's see if it works
 
 ```bash
 # Starting from CUDA 12.x (check with nvidia-smi)
@@ -116,7 +112,7 @@ wget https://developer.download.nvidia.com/compute/cuda/repos/<distro>/<arch>/cu
 # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
 sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt update
-sudo apt install cudnn9-cuda-12
+sudo apt install cudnn
 # TensorRT 10.5 (Python API only can be entirely installed in pip)
 wget https://developer.nvidia.com/downloads/compute/machine-learning/tensorrt/10.5.0/local_repo/nv-tensorrt-local-repo-ubuntu2204-10.5.0-cuda-12.6_1.0-1_amd64.deb
 sudo dpkg -i nv-tensorrt-local-repo-ubuntu2204-10.5.0-cuda-12.6_1.0-1_amd64.deb
@@ -130,6 +126,13 @@ pip3 intall -r requirements.txt
 ```
 
 Though it seems like everything can be installed through pip ??
+
+### Docker setup (maintained)
+
+```bash
+docker build -t zoedepth --target rosdep-pip .
+docker run --rm -it zoedepth
+```
 
 ## Topics
 

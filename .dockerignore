@@ -1,0 +1,15 @@
+__pycache__
+.aider*
+.devcontainer/
+.env
+.github/
+build/
+data/
+install/
+log/
+scripts/
+.dockerignore
+.gitignore
+Dockerfile
+README.md
+*.onnx

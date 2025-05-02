@@ -14,7 +14,7 @@ setup(
     ],
     install_requires=[
         'setuptools',
-        'zoedepth @ git+https://github.com/isl-org/ZoeDepth.git'
+        # 'zoedepth @ git+https://github.com/isl-org/ZoeDepth.git'
     ],
     zip_safe=True,
     maintainer='Victor Talpaert',
